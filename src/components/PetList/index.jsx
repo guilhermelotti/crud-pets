@@ -151,7 +151,6 @@ export default function PetList() {
   }
 
   function clearSearchFilters() {
-    setSearchBy("name");
     setSearchTerm("");
   }
 

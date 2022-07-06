@@ -112,7 +112,7 @@ export default function PetList() {
       })
       .then((res) => {
         onEditAlertClose();
-        const newPetArray = pets.filter((pet) => pet.id === itemToBeEdited.id);
+        const newPetArray = pets.filter((pet) => pet.id !== itemToBeEdited.id);
         setPets([...newPetArray, { ...values, id: itemToBeEdited.id }]);
         setItemToBeEdited(null);
       });
@@ -220,7 +220,7 @@ export default function PetList() {
               colorScheme="red"
               mr={3}
               id="edit-pet-form"
-              onClick={handleSubmit(() => handleEditPet)}
+              onClick={handleSubmit(handleEditPet)}
               isLoading={isSubmitting}
             >
               Save

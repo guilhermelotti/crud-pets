@@ -5,18 +5,54 @@
       "caregiverName": "Guilherme Costa",
       "weight": 18,
       "age": 12,
-      "type": "teste2",
-      "name": "Scooby Doo",
+      "type": "Hamster",
+      "name": "Mini",
       "id": "486d50dc-f104-45c3-924b-34f1ee2915f8"
     },
     {
-      "isDocile": false,
-      "caregiverName": "Joaquim",
-      "weight": 4,
-      "age": 5,
-      "type": "Hamster",
-      "name": "Mini",
+      "isDocile": true,
+      "caregiverName": "Ana Laura",
+      "weight": 30,
+      "age": 12,
+      "type": "Dog",
+      "name": "Scooby Doo",
       "id": "be325e68-e882-4378-b775-ec12252a9fa5"
+    },
+    {
+      "isDocile": true,
+      "caregiverName": "Gilson",
+      "weight": 20,
+      "age": 5,
+      "type": "Dog",
+      "name": "Scotch",
+      "id": "6a626630-e7cc-4dce-bd8d-cf1548cf951e"
+    },
+    {
+      "isDocile": true,
+      "caregiverName": "João",
+      "weight": 20,
+      "age": 12,
+      "type": "Cat",
+      "name": "Safira",
+      "id": "74becc02-59a6-4fdb-96c3-49244ccc7b50"
+    },
+    {
+      "isDocile": false,
+      "caregiverName": "Marcos",
+      "weight": 23,
+      "age": 12,
+      "type": "Dog",
+      "name": "Jade",
+      "id": "51006026-6f69-4e72-aaa7-34e95fe02009"
+    },
+    {
+      "isDocile": false,
+      "caregiverName": "Bianca",
+      "weight": 40,
+      "age": 12,
+      "type": "Dog",
+      "name": "Toddy",
+      "id": "b287df84-9a81-49a9-b735-d9dca69382fb"
     }
   ]
 }

@@ -23,7 +23,7 @@ import { petFormSchema } from "../../utils/yup/schema";
 import { api } from "../../services/api";
 
 import { v4 as uuid } from "uuid";
-import { Input } from "../../components/Input";
+import { Input as StyledInput } from "../../components/Input";
 
 export function CreatePet() {
   let navigate = useNavigate();
@@ -68,16 +68,24 @@ export function CreatePet() {
 
           <VStack spacing="8">
             <SimpleGrid minChildWidth="240px" spacing={["6", "8"]} w="100%">
-              <Input
+              <StyledInput
                 label="Name"
                 error={errors.name}
-                {...register("name")} // in the new version this already add the "name" input property
+                {...register("name")}
               />
-              <Input label="Type" error={errors.type} {...register("type")} />
+              <StyledInput
+                label="Type"
+                error={errors.type}
+                {...register("type")}
+              />
             </SimpleGrid>
             <SimpleGrid minChildWidth="240px" spacing={["6", "8"]} w="100%">
-              <Input label="Age" error={errors.age} {...register("age")} />
-              <Input
+              <StyledInput
+                label="Age"
+                error={errors.age}
+                {...register("age")}
+              />
+              <StyledInput
                 label="Weight"
                 error={errors.weight}
                 {...register("weight")}
@@ -101,7 +109,7 @@ export function CreatePet() {
                   <FormErrorMessage>{errors.isDocile.message}</FormErrorMessage>
                 )}
               </Box>
-              <Input
+              <StyledInput
                 label="Caregiver Name"
                 error={errors.caregiverName}
                 {...register("caregiverName")}

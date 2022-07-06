@@ -86,7 +86,7 @@ export function CreatePet() {
                 {...register("age")}
               />
               <StyledInput
-                label="Weight"
+                label="Weight (kg)"
                 error={errors.weight}
                 {...register("weight")}
               />

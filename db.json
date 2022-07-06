@@ -2,7 +2,7 @@
   "pets": [
     {
       "isDocile": true,
-      "caregiverName": "Guilherme Costa",
+      "caregiverName": "Ariel",
       "weight": 18,
       "age": 12,
       "type": "Hamster",
@@ -53,6 +53,15 @@
       "type": "Dog",
       "name": "Toddy",
       "id": "b287df84-9a81-49a9-b735-d9dca69382fb"
+    },
+    {
+      "isDocile": true,
+      "caregiverName": "Guilherme",
+      "weight": 9,
+      "age": 4,
+      "type": "Bird",
+      "name": "Aurora",
+      "id": "ecd354af-ce76-4fe2-bf9c-465b60565d21"
     }
   ]
 }

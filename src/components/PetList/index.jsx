@@ -91,6 +91,12 @@ export default function PetList() {
             setIsLoadingSearchResults(false);
           });
           break;
+        case "type":
+          api.get(`/pets?type=${debouncedSearch}`).then((res) => {
+            setPets(res.data);
+            setIsLoadingSearchResults(false);
+          });
+          break;
         default:
           setIsLoadingSearchResults(false);
           alert(`No select option selected.`);
@@ -142,6 +148,11 @@ export default function PetList() {
     onEditAlertClose();
     setItemToBeEdited(null);
     reset();
+  }
+
+  function clearSearchFilters() {
+    setSearchBy("name");
+    setSearchTerm("");
   }
 
   return (
@@ -269,11 +280,25 @@ export default function PetList() {
                 justifyContent={"center"}
                 gap={"3"}
               >
-                <Input
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  bgColor="white"
-                />
+                {searchBy !== "type" && (
+                  <Input
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    bgColor="white"
+                  />
+                )}
+                {searchBy === "type" && (
+                  <Select
+                    bg={"white"}
+                    color={"black"}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  >
+                    <option value="Hamster">Hamster</option>
+                    <option value="Dog">Dog</option>
+                    <option value="Cat">Cat</option>
+                    <option value="Bird">Bird</option>
+                  </Select>
+                )}
                 <Select
                   bg={"white"}
                   color={"black"}
@@ -282,7 +307,9 @@ export default function PetList() {
                 >
                   <option value="name">Pet name</option>
                   <option value="caregiverName">Caregiver name</option>
+                  <option value="type">Pet type</option>
                 </Select>
+                <Button onClick={clearSearchFilters}>Clear</Button>
               </Flex>
 
               <Link href="/pets/create">
@@ -330,7 +357,7 @@ export default function PetList() {
                             </Td>
                             <Td>
                               <Text fontSize="sm" color="gray.300">
-                                {pet.weight}
+                                {pet.weight}kg
                               </Text>
                             </Td>
                             <Td>

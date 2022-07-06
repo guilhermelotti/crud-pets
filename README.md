@@ -6,5 +6,3 @@
 [x] - Tela de cadastro: Cadastro do pet
 
 Campos: nome, animal, idade, peso, checkbox dócil, nome do cuidador.
-
-// TODO: perguntar sobre o campo isDocile

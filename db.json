@@ -1,0 +1,22 @@
+{
+  "pets": [
+    {
+      "isDocile": true,
+      "caregiverName": "Guilherme Costa",
+      "weight": 18,
+      "age": 12,
+      "type": "teste2",
+      "name": "Scooby Doo",
+      "id": "486d50dc-f104-45c3-924b-34f1ee2915f8"
+    },
+    {
+      "isDocile": false,
+      "caregiverName": "Joaquim",
+      "weight": 4,
+      "age": 5,
+      "type": "Hamster",
+      "name": "Mini",
+      "id": "be325e68-e882-4378-b775-ec12252a9fa5"
+    }
+  ]
+}

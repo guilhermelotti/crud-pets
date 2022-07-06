@@ -2,7 +2,6 @@ import {
   Box,
   Button,
   Flex,
-  Heading,
   Table,
   Tbody,
   Td,
@@ -22,9 +21,11 @@ import {
   useDisclosure,
   Select,
   FormErrorMessage,
+  FormControl,
+  Input,
 } from "@chakra-ui/react";
 
-import { Input } from "../Input";
+import { Input as StyledInput } from "../Input";
 
 import { useEffect, useState } from "react";
 
@@ -33,21 +34,29 @@ import { api } from "../../services/api";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { petFormSchema } from "../../utils/yup/schema";
+import { useDebounce } from "../../hooks/useDebounce";
 
 export default function PetList() {
   const [pets, setPets] = useState([]);
+  const [itemToBeDeleted, setItemToBeDeleted] = useState(null);
+  const [itemToBeEdited, setItemToBeEdited] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchBy, setSearchBy] = useState("name");
+  const [isLoadingSearchResults, setIsLoadingSearchResults] = useState(false);
+
   const {
     isOpen: isDeleteAlertOpen,
     onOpen: onDeleteAlertOpen,
     onClose: onDeleteAlertClose,
   } = useDisclosure();
+
   const {
     isOpen: isEditAlertOpen,
     onOpen: onEditAlertOpen,
     onClose: onEditAlertClose,
   } = useDisclosure();
-  const [itemToBeDeleted, setItemToBeDeleted] = useState(null);
-  const [itemToBeEdited, setItemToBeEdited] = useState(null);
+
+  const debouncedSearch = useDebounce(searchTerm, 600);
 
   const {
     reset,
@@ -59,10 +68,30 @@ export default function PetList() {
   });
 
   useEffect(() => {
-    api.get("/pets").then((res) => {
-      setPets(res.data);
-    });
-  }, []);
+    if (debouncedSearch.length > 0) {
+      setIsLoadingSearchResults(true);
+      switch (searchBy) {
+        case "name":
+          api.get(`/pets?name=${debouncedSearch}`).then((res) => {
+            setPets(res.data);
+            setIsLoadingSearchResults(false);
+          });
+          break;
+        case "caregiverName":
+          api.get(`/pets?caregiverName=${debouncedSearch}`).then((res) => {
+            setPets(res.data);
+            setIsLoadingSearchResults(false);
+          });
+          break;
+        default:
+          alert(`No select option selected.`);
+      }
+    } else {
+      api.get("/pets").then((res) => {
+        setPets(res.data);
+      });
+    }
+  }, [debouncedSearch, searchBy]);
 
   function handleDeletePet() {
     api
@@ -76,8 +105,8 @@ export default function PetList() {
       .catch(() => alert("Error: Could not delete pet"));
   }
 
-  const handleEditPet = async (values) => {
-    await api
+  function handleEditPet(values) {
+    api
       .put(`/pets/${itemToBeEdited.id}`, {
         ...values,
       })
@@ -87,7 +116,7 @@ export default function PetList() {
         setPets([...newPetArray, { ...values, id: itemToBeEdited.id }]);
         setItemToBeEdited(null);
       });
-  };
+  }
 
   function handleOpenDeletePetAlert(id) {
     onDeleteAlertOpen();
@@ -128,13 +157,13 @@ export default function PetList() {
             >
               <VStack spacing="8">
                 <Flex gap="3">
-                  <Input
+                  <StyledInput
                     label="Name"
                     placeholder={itemToBeEdited?.name}
                     error={errors.name}
-                    {...register("name")} // in the new version this already add the "name" input property
+                    {...register("name")}
                   />
-                  <Input
+                  <StyledInput
                     label="Type"
                     placeholder={itemToBeEdited?.type}
                     error={errors.type}
@@ -142,13 +171,13 @@ export default function PetList() {
                   />
                 </Flex>
                 <Flex gap="3">
-                  <Input
+                  <StyledInput
                     placeholder={itemToBeEdited?.age}
                     label="Age"
                     error={errors.age}
                     {...register("age")}
                   />
-                  <Input
+                  <StyledInput
                     placeholder={itemToBeEdited?.weight}
                     label="Weight"
                     error={errors.weight}
@@ -156,7 +185,7 @@ export default function PetList() {
                   />
                 </Flex>
                 <Flex gap="3">
-                  <Box>
+                  <FormControl isInvalid={!!errors.isDocile}>
                     <Text color={"gray"} mb="2">
                       Docile
                     </Text>
@@ -174,8 +203,8 @@ export default function PetList() {
                         {errors.isDocile.message}
                       </FormErrorMessage>
                     )}
-                  </Box>
-                  <Input
+                  </FormControl>
+                  <StyledInput
                     label="Caregiver Name"
                     placeholder={itemToBeEdited?.caregiverName}
                     error={errors.caregiverName}
@@ -191,9 +220,7 @@ export default function PetList() {
               colorScheme="red"
               mr={3}
               id="edit-pet-form"
-              onClick={handleSubmit(handleEditPet)}
-              // Isso é necessario para fazer o submit com o botão fora do form
-
+              onClick={handleSubmit(() => handleEditPet)}
               isLoading={isSubmitting}
             >
               Save
@@ -231,9 +258,28 @@ export default function PetList() {
         <Flex w="100%" px="6">
           <Box flex="1" borderRadius={8} bg="gray.800" p="8">
             <Flex mb="8" justify="space-between" align="center">
-              <Heading size="lg" fontWeight="normal">
-                Pets
-              </Heading>
+              <Flex
+                as="form"
+                alignItems={"center"}
+                justifyContent={"center"}
+                gap={"3"}
+              >
+                <Input
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  bgColor="white"
+                />
+                <Select
+                  placeholder="Search by"
+                  bg={"white"}
+                  color={"black"}
+                  value={searchBy}
+                  onChange={(e) => setSearchBy(e.target.value)}
+                >
+                  <option value="name">Pet name</option>
+                  <option value="caregiverName">Caregiver name</option>
+                </Select>
+              </Flex>
 
               <Link href="/pets/create">
                 <Button size="md" fontSize="sm" colorScheme="green">
@@ -241,78 +287,88 @@ export default function PetList() {
                 </Button>
               </Link>
             </Flex>
-            <Table colorScheme="whiteAlpha" color={"white"} size={"sm"}>
-              <Thead>
-                <Tr>
-                  <Th>Name</Th>
-                  <Th>Type</Th>
-                  <Th>Age</Th>
-                  <Th>Weight</Th>
-                  <Th>Caregiver name</Th>
-                  <Th>Docile</Th>
-                  <Th w="8"></Th>
-                </Tr>
-              </Thead>
-
-              <Tbody>
-                {pets.map((pet) => {
-                  return (
-                    <Tr key={pet.id}>
-                      <Td>
-                        <Link color="green.400">
-                          <Text fontWeight="bold">{pet.name}</Text>
-                        </Link>
-                      </Td>
-                      <Td>
-                        <Text fontSize="sm" color="gray.300">
-                          {pet.type}
-                        </Text>
-                      </Td>
-                      <Td>
-                        <Text fontSize="sm" color="gray.300">
-                          {pet.age}
-                        </Text>
-                      </Td>
-                      <Td>
-                        <Text fontSize="sm" color="gray.300">
-                          {pet.weight}
-                        </Text>
-                      </Td>
-                      <Td>
-                        <Text fontSize="sm" color="gray.300">
-                          {pet.caregiverName}
-                        </Text>
-                      </Td>
-                      <Td>
-                        <Text fontSize="sm" color="gray.300">
-                          {pet.isDocile ? "Yes" : "No"}
-                        </Text>
-                      </Td>
-                      <Td>
-                        <Flex gap="2">
-                          <Button
-                            size="sm"
-                            fontSize="sm"
-                            colorScheme="green"
-                            onClick={() => handleOpenEditPetAlert(pet)}
-                          >
-                            Edit
-                          </Button>
-                          <Button
-                            size="sm"
-                            fontSize="sm"
-                            colorScheme="red"
-                            onClick={() => handleOpenDeletePetAlert(pet.id)}
-                          >
-                            Remove
-                          </Button>
-                        </Flex>
-                      </Td>
+            {isLoadingSearchResults ? (
+              <Text color={"white"}>Loading</Text>
+            ) : (
+              <>
+                <Table colorScheme="whiteAlpha" color={"white"} size={"sm"}>
+                  <Thead>
+                    <Tr>
+                      <Th>Name</Th>
+                      <Th>Type</Th>
+                      <Th>Age</Th>
+                      <Th>Weight</Th>
+                      <Th>Caregiver name</Th>
+                      <Th>Docile</Th>
+                      <Th w="8"></Th>
                     </Tr>
-                  );
-                })}
-              </Tbody>
-            </Table>
+                  </Thead>
+
+                  <Tbody>
+                    {pets.length > 0 &&
+                      pets.map((pet) => {
+                        return (
+                          <Tr key={pet.id}>
+                            <Td>
+                              <Link color="green.400">
+                                <Text fontWeight="bold">{pet.name}</Text>
+                              </Link>
+                            </Td>
+                            <Td>
+                              <Text fontSize="sm" color="gray.300">
+                                {pet.type}
+                              </Text>
+                            </Td>
+                            <Td>
+                              <Text fontSize="sm" color="gray.300">
+                                {pet.age}
+                              </Text>
+                            </Td>
+                            <Td>
+                              <Text fontSize="sm" color="gray.300">
+                                {pet.weight}
+                              </Text>
+                            </Td>
+                            <Td>
+                              <Text fontSize="sm" color="gray.300">
+                                {pet.caregiverName}
+                              </Text>
+                            </Td>
+                            <Td>
+                              <Text fontSize="sm" color="gray.300">
+                                {pet.isDocile ? "Yes" : "No"}
+                              </Text>
+                            </Td>
+                            <Td>
+                              <Flex gap="2">
+                                <Button
+                                  size="sm"
+                                  fontSize="sm"
+                                  colorScheme="green"
+                                  onClick={() => handleOpenEditPetAlert(pet)}
+                                >
+                                  Edit
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  fontSize="sm"
+                                  colorScheme="red"
+                                  onClick={() =>
+                                    handleOpenDeletePetAlert(pet.id)
+                                  }
+                                >
+                                  Remove
+                                </Button>
+                              </Flex>
+                            </Td>
+                          </Tr>
+                        );
+                      })}
+                  </Tbody>
+                </Table>
+                {pets.length <= 0 && <Text color={"white"}>No pets found</Text>}
+              </>
+            )}
           </Box>
         </Flex>
       </Box>

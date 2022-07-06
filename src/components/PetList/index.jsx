@@ -68,6 +68,14 @@ export default function PetList() {
   });
 
   useEffect(() => {
+    if (debouncedSearch.length <= 0) {
+      api.get("/pets").then((res) => {
+        setPets(res.data);
+      });
+    }
+  }, [debouncedSearch]);
+
+  useEffect(() => {
     if (debouncedSearch.length > 0) {
       setIsLoadingSearchResults(true);
       switch (searchBy) {
@@ -86,10 +94,6 @@ export default function PetList() {
         default:
           alert(`No select option selected.`);
       }
-    } else {
-      api.get("/pets").then((res) => {
-        setPets(res.data);
-      });
     }
   }, [debouncedSearch, searchBy]);
 

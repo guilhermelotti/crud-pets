@@ -92,6 +92,7 @@ export default function PetList() {
           });
           break;
         default:
+          setIsLoadingSearchResults(false);
           alert(`No select option selected.`);
       }
     }
@@ -274,7 +275,6 @@ export default function PetList() {
                   bgColor="white"
                 />
                 <Select
-                  placeholder="Search by"
                   bg={"white"}
                   color={"black"}
                   value={searchBy}
